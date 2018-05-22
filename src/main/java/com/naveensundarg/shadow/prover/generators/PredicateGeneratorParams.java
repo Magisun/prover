@@ -2,9 +2,11 @@ package com.naveensundarg.shadow.prover.generators;
 
 public class PredicateGeneratorParams extends GeneratorParams {
 
+    // TODO: Make into a range
     public int numConstants;
-    public int minConstants;
-    public int maxConstants;
+    public int minArguments;
+    public int maxArguments;
+    // TODO: Make into a range
     public int numPredicates;
     public int numEqualities;
 
@@ -21,8 +23,8 @@ public class PredicateGeneratorParams extends GeneratorParams {
 
     protected void copyTo(PredicateGeneratorParams other) {
         other.numConstants = this.numConstants;
-        other.minConstants = this.minConstants;
-        other.maxConstants = this.maxConstants;
+        other.minArguments = this.minArguments;
+        other.maxArguments = this.maxArguments;
         other.numPredicates = this.numPredicates;
         other.numEqualities = this.numEqualities;
     }

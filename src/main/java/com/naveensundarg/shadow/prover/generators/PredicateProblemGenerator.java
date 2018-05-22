@@ -40,7 +40,7 @@ public class PredicateProblemGenerator implements Generator {
         for(int i = 0; i < params.numPredicates; i++) {
             this.predicatePool[i] = ImmutablePair.from(
                     predicateSpace.getNextName(),
-                    ThreadLocalRandom.current().nextInt(params.minConstants, params.maxConstants+1));
+                    ThreadLocalRandom.current().nextInt(params.minArguments, params.maxArguments +1));
         }
     }
 
