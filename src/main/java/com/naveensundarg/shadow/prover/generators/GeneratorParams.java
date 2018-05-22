@@ -1,5 +1,9 @@
 package com.naveensundarg.shadow.prover.generators;
 
+import org.json.JSONObject;
+
+import java.lang.reflect.Field;
+
 public class GeneratorParams {
 
         public int maxAtoms;
@@ -20,6 +24,17 @@ public class GeneratorParams {
             other.maxAtoms = this.maxAtoms;
             other.maxLiteralsInClause = this.maxLiteralsInClause;
             other.clauses = this.clauses;
+        }
+
+        public JSONObject toJSON() {
+            Field[] fields = this.getClass().getFields();
+            String[] fieldNames = new String[fields.length];
+
+            for(int i = 0; i < fields.length; i++) {
+                fieldNames[i] = fields[i].getName();
+            }
+
+            return new JSONObject(this, fieldNames);
         }
  }
 
