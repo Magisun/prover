@@ -4,6 +4,7 @@ public class GeneratorParams {
 
         public int maxAtoms;
         public int maxLiteralsInClause;
+        // TODO: Make into a range
         public int clauses;
 
 
