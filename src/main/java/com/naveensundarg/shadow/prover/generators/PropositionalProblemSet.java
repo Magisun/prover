@@ -58,7 +58,7 @@ public class PropositionalProblemSet implements ProblemSet {
             JSONObject container = new JSONObject();
 
 
-            container.put("consistent", problem.second() ? 1 : 0);
+            container.put("consistent", problem.second() ? 0 : 1);
 
 
             JSONArray formulae = new JSONArray();
