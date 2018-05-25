@@ -16,6 +16,13 @@ import java.util.stream.Collectors;
 
 public class Vectorizer {
 
+    /*
+        - JSON
+        - specify parameters
+        - specify type of export
+        - rationalise parameters
+     */
+
     private GeneratorParams generatorParams;
 
     public Vectorizer(GeneratorParams generatorParams){

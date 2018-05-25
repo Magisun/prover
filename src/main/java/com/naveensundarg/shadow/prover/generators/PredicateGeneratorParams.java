@@ -8,6 +8,7 @@ public class PredicateGeneratorParams extends GeneratorParams {
     public int maxArguments;
     // TODO: Make into a range
     public int numPredicates;
+    // TODO: Make into a range
     public int numEqualities;
 
 
