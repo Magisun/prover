@@ -75,7 +75,7 @@ public class PropositionalProblemSet implements ProblemSet {
 
                 Set<Formula> literals = Arrays.stream(((Or) formula).getArguments()).collect(Collectors.toSet());
                 for(int i = 0; i < params.atoms; i++) {
-                    Atom atom = new Atom(Names.NAMES[i]);
+                    Atom atom = new Atom(atomSpace.indexToName(i));
                     Not negatedAtom = new Not(atom);
 
                     if(literals.contains(atom)) {

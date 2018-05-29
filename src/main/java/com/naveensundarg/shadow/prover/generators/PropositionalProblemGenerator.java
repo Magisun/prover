@@ -41,21 +41,16 @@ public class PropositionalProblemGenerator implements Generator {
     }
 
     @Override
-    public List<Pair<List<Formula>, Boolean>> generate(int total) {
-
+    public ProblemSet generate(int total) {
 
         List<Pair<List<Formula>, Boolean>> generated = CollectionUtils.newEmptyList();
-
 
         for (int i = 0; i < total; i++) {
 
             generated.add(generateProblem());
         }
 
-
-        return generated;
-
-
+        return new PropositionalProblemSet(generated, params, atomSpace);
     }
 
 
