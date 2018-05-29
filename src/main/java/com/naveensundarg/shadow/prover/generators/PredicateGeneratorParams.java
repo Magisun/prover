@@ -43,4 +43,10 @@ public class PredicateGeneratorParams extends GeneratorParams {
         this.predicates = other.predicates;
         this.equalities = other.equalities;
     }
+
+    public void sanityCheck() {
+        assert equalities.max <= clauseWidth;
+
+        assert predicateArguments.max <= constants;
+    }
 }
