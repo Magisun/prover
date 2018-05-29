@@ -7,7 +7,7 @@ public class PredicateGeneratorParams extends GeneratorParams {
      * <p>
      * See GeneratorParams.atoms for a description of name pooling.
      */
-    public Range constants;
+    public int constants;
 
     /**
      * Specifies the min & max arity for predicate.
@@ -29,7 +29,9 @@ public class PredicateGeneratorParams extends GeneratorParams {
     public PredicateGeneratorParams() {
         super();
 
-        this.constants = this.predicateArguments = this.predicates =
+        this.constants = 0;
+
+        this.predicateArguments = this.predicates =
                 this.equalities = new Range(0, 0);
     }
 
