@@ -21,11 +21,17 @@ public class PropositionalProblemGenerator implements Generator {
     static Prover prover;
 
     private final GeneratorParams params;
+    public final NameSpace atomSpace;
 
 
     public PropositionalProblemGenerator(GeneratorParams generatorParams) {
 
         this.params = new GeneratorParams(generatorParams);
+        this.atomSpace = new NameSpace("a");
+
+        for(int i = 0; i < this.params.atoms; i++) {
+            this.atomSpace.getNextName();
+        }
     }
 
 
@@ -84,6 +90,7 @@ public class PropositionalProblemGenerator implements Generator {
 
         List<Formula> clauseLiterals = CollectionUtils.newEmptyList();
 
+        HashSet<String> usedAtoms;
 
         for (int i = 0; i < totalLiteralsInClause; i++) {
 
@@ -112,7 +119,7 @@ public class PropositionalProblemGenerator implements Generator {
 
     private Atom generateRandomAtom() {
 
-        return new Atom(Names.NAMES[ThreadLocalRandom.current().nextInt(0, params.atoms)]);
+        return new Atom(atomSpace.indexToName(ThreadLocalRandom.current().nextInt(0, params.atoms)));
     }
 
 

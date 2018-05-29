@@ -19,16 +19,22 @@ import java.util.stream.Collectors;
 
 public class PropositionalProblemSet implements ProblemSet {
 
-    private static final long VERSION = 1;
+    private static final long VERSION = 2;
 
     private List<Pair<List<Formula>, Boolean>> pset;
+    private GeneratorParams params;
+    private NameSpace atomSpace;
 
     public PropositionalProblemSet() {
         this.pset = CollectionUtils.newEmptyList();
     }
 
-    public PropositionalProblemSet(List<Pair<List<Formula>, Boolean>> pset) {
+    public PropositionalProblemSet(List<Pair<List<Formula>, Boolean>> pset,
+                                   GeneratorParams params,
+                                   NameSpace atomSpace) {
         this.pset = pset;
+        this.params = new GeneratorParams(params);
+        this.atomSpace = atomSpace;
     }
 
 
@@ -36,13 +42,13 @@ public class PropositionalProblemSet implements ProblemSet {
 
 
     @Override
-    public void writeToWriter(Writer writer, GeneratorParams params) {
+    public void writeToWriter(Writer writer) {
         JSONObject container = new JSONObject();
 
         container.put("type", PropositionalProblemSet.class.getSimpleName());
         container.put("version", VERSION);
 
-        container.put("signature", collectSignature(params));
+        //container.put("signature", collectSignature(params));
         container.put("problems", collectProblems(params));
 
         container.put("parameters", params.toJSON());
@@ -63,11 +69,12 @@ public class PropositionalProblemSet implements ProblemSet {
 
             JSONArray formulae = new JSONArray();
 
+            // Add all generated formulae to the matrix
             for(Formula formula : problem.first()) {
                 JSONArray formulaRepresentation = new JSONArray();
 
                 Set<Formula> literals = Arrays.stream(((Or) formula).getArguments()).collect(Collectors.toSet());
-                for(int i = 0; i < params.maxAtoms; i++) {
+                for(int i = 0; i < params.atoms; i++) {
                     Atom atom = new Atom(Names.NAMES[i]);
                     Not negatedAtom = new Not(atom);
 
@@ -84,6 +91,19 @@ public class PropositionalProblemSet implements ProblemSet {
                 formulae.put(formulaRepresentation);
             }
 
+            // Add additional empty clauses to pad out the matrix if needed
+            if(problem.first().size() < params.clauses.max) {
+                JSONArray emptyFormula = new JSONArray();
+
+                for(int i = 0; i < params.atoms; i++) {
+                    emptyFormula.put(0);
+                }
+
+                for(int i = 0; i < params.clauses.max - problem.first().size(); i++) {
+                    formulae.put(emptyFormula);
+                }
+            }
+
             container.put("formulae", formulae);
 
 
@@ -97,7 +117,7 @@ public class PropositionalProblemSet implements ProblemSet {
     private JSONObject collectSignature(GeneratorParams params) {
         JSONObject map = new JSONObject();
 
-        for(int i = 0; i < params.maxAtoms; i++) {
+        for(int i = 0; i < params.atoms; i++) {
             map.put(Integer.toString(i), 0);
         }
 

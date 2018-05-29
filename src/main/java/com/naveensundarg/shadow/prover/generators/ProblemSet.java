@@ -5,7 +5,7 @@ import java.io.Writer;
 
 public interface ProblemSet {
 
-    void writeToWriter(Writer writer, GeneratorParams params);
+    void writeToWriter(Writer writer);
 
     void readFromReader(Reader reader);
 }
