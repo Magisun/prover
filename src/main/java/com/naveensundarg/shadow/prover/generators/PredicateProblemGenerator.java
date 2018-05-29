@@ -71,7 +71,8 @@ public class PredicateProblemGenerator implements Generator {
 
         List<Formula> clauses = CollectionUtils.newEmptyList();
 
-        int totalClauses = ThreadLocalRandom.current().nextInt(params.clauses.min, params.clauses.max);
+        int totalClauses = params.clauses.max > params.clauses.min ?
+                ThreadLocalRandom.current().nextInt(params.clauses.min, params.clauses.max) : params.clauses.max;
 
         for(int i = 0; i < totalClauses; i++){
 
@@ -93,7 +94,10 @@ public class PredicateProblemGenerator implements Generator {
     private Formula generateRandomEquality() {
         List<Value> constants = getRandomConstants(2);
 
-        return new Predicate("=", (Value[])constants.toArray());
+        Value[] args = new Value[2];
+        constants.toArray(args);
+
+        return new Predicate("=", args);
     }
 
     private Formula generateRandomClause(){
@@ -105,12 +109,23 @@ public class PredicateProblemGenerator implements Generator {
         List<Formula> clauseLiterals = CollectionUtils.newEmptyList();
 
         for(int i = 0; i < totalLiteralsInClause - equalities; i++){
+            boolean negated = ThreadLocalRandom.current().nextBoolean();
 
-            clauseLiterals.add(generateRandomLiteral());
+            if(negated) {
+                clauseLiterals.add(new Not(generateRandomClause()));
+            } else {
+                clauseLiterals.add(generateRandomLiteral());
+            }
         }
 
         for(int i = 0; i < equalities; i++) {
-            clauseLiterals.add(generateRandomEquality());
+            boolean negated = ThreadLocalRandom.current().nextBoolean();
+
+            if(negated) {
+                clauseLiterals.add(new Not(generateRandomEquality()));
+            } else {
+                clauseLiterals.add(generateRandomEquality());
+            }
         }
 
         return new Or(clauseLiterals);
@@ -135,7 +150,10 @@ public class PredicateProblemGenerator implements Generator {
 
         List<Value> arguments = getRandomConstants(predicateInfo.second());
 
-        return new Predicate(predicateInfo.first(), (Value[])arguments.toArray());
+        Value[] args = new Value[arguments.size()];
+        arguments.toArray(args);
+
+        return new Predicate(predicateInfo.first(), args);
     }
 
     private List<Value> getRandomConstants(int num_constants) {

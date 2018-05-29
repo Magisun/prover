@@ -85,8 +85,6 @@ public class PropositionalProblemGenerator implements Generator {
 
         List<Formula> clauseLiterals = CollectionUtils.newEmptyList();
 
-        HashSet<String> usedAtoms;
-
         for (int i = 0; i < totalLiteralsInClause; i++) {
 
             clauseLiterals.add(generateRandomLiteral());
