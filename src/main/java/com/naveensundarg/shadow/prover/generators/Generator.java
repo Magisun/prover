@@ -10,6 +10,6 @@ import java.util.Set;
 
 public interface Generator {
 
-    List<Pair<List<Formula>, Boolean>> generate(int total);
+    ProblemSet generate(int total);
 
 }
