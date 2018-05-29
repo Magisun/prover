@@ -9,34 +9,27 @@ import com.naveensundarg.shadow.prover.representations.formula.Formula;
 import com.naveensundarg.shadow.prover.representations.formula.Not;
 import com.naveensundarg.shadow.prover.representations.formula.Or;
 import com.naveensundarg.shadow.prover.utils.CollectionUtils;
-import com.naveensundarg.shadow.prover.utils.CommonUtils;
 import com.naveensundarg.shadow.prover.utils.ImmutablePair;
 import com.naveensundarg.shadow.prover.utils.Pair;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 public class PropositionalProblemGenerator implements Generator {
 
     static Prover prover;
 
-    private final int maxLiteralsInClause;
-    private final int maxAtoms;
-    private final int totalClauses;
+    private final GeneratorParams params;
 
 
-    public PropositionalProblemGenerator(GeneratorParams generatorParams){
+    public PropositionalProblemGenerator(GeneratorParams generatorParams) {
 
-        this.maxAtoms = generatorParams.maxAtoms;
-        this.maxLiteralsInClause = generatorParams.maxLiteralsInClause;
-        this.totalClauses = generatorParams.clauses;
+        this.params = new GeneratorParams(generatorParams);
     }
 
 
-    static{
+    static {
 
         prover = SnarkWrapper.getInstance();
     }
@@ -45,16 +38,13 @@ public class PropositionalProblemGenerator implements Generator {
     public List<Pair<List<Formula>, Boolean>> generate(int total) {
 
 
-
         List<Pair<List<Formula>, Boolean>> generated = CollectionUtils.newEmptyList();
 
 
-        for (int i = 0; i < total; i++){
-
+        for (int i = 0; i < total; i++) {
 
             generated.add(generateProblem());
         }
-
 
 
         return generated;
@@ -63,22 +53,21 @@ public class PropositionalProblemGenerator implements Generator {
     }
 
 
-    private Pair<List<Formula>, Boolean> generateProblem(){
+    private Pair<List<Formula>, Boolean> generateProblem() {
 
         List<Formula> clauses = CollectionUtils.newEmptyList();
 
+        int totalClauses = ThreadLocalRandom.current().nextInt(params.clauses.min, params.clauses.max + 1);
 
-
-        for(int i = 0; i< totalClauses; i++){
+        for (int i = 0; i < totalClauses; i++) {
 
             clauses.add(generateRandomClause());
-
         }
 
 
-       // Formula goalNeg = CommonUtils.pickRandom(clauses);
+        // Formula goalNeg = CommonUtils.pickRandom(clauses);
 
-        if(prover.prove(new HashSet<>(clauses), Logic.getFalseFormula()).isPresent()){
+        if (prover.prove(new HashSet<>(clauses), Logic.getFalseFormula()).isPresent()) {
 
             return ImmutablePair.from(clauses, true);
 
@@ -89,17 +78,16 @@ public class PropositionalProblemGenerator implements Generator {
 
     }
 
-    private Formula generateRandomClause(){
+    private Formula generateRandomClause() {
 
-        int totalLiteralsInClause = ThreadLocalRandom.current().nextInt(1, maxLiteralsInClause + 1 );
+        int totalLiteralsInClause = ThreadLocalRandom.current().nextInt(1, params.clauseWidth + 1);
 
         List<Formula> clauseLiterals = CollectionUtils.newEmptyList();
 
 
-        for(int i = 0; i< totalLiteralsInClause; i++){
+        for (int i = 0; i < totalLiteralsInClause; i++) {
 
             clauseLiterals.add(generateRandomLiteral());
-
         }
 
         return new Or(clauseLiterals);
@@ -107,10 +95,10 @@ public class PropositionalProblemGenerator implements Generator {
 
     }
 
-    private Formula generateRandomLiteral(){
+    private Formula generateRandomLiteral() {
 
         Atom atom = generateRandomAtom();
-        if(ThreadLocalRandom.current().nextBoolean()){
+        if (ThreadLocalRandom.current().nextBoolean()) {
 
             return atom;
 
@@ -122,16 +110,10 @@ public class PropositionalProblemGenerator implements Generator {
     }
 
 
-    private  Atom generateRandomAtom(){
+    private Atom generateRandomAtom() {
 
-        return new Atom(Names.NAMES[ThreadLocalRandom.current().nextInt(0, maxAtoms)]);
-
+        return new Atom(Names.NAMES[ThreadLocalRandom.current().nextInt(0, params.atoms)]);
     }
-
-
-
-
-
 
 
 }
