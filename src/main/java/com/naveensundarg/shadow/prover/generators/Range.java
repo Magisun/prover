@@ -12,6 +12,8 @@ public class Range {
 
 
     public Range(int min, int max) {
+        assert min <= max;
+
         this.min = min;
         this.max = max;
     }
