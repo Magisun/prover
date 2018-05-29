@@ -29,7 +29,7 @@ public class PredicateProblemGenerator implements Generator {
 
         this.params = new PredicateGeneratorParams(generatorParams);
         this.constantSpace = new NameSpace("c");
-        this.predicateSpace = new NameSpace("P");
+        this.predicateSpace = new NameSpace("P", 2);
 
         this.constantPool = new Constant[params.constants];
         for(int i = 0; i < params.constants; i++) {
