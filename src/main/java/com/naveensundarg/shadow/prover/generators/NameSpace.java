@@ -7,20 +7,18 @@ import java.util.Map;
 public class NameSpace {
 
     private String prefix;
-    private int curIndex;
+    private int curIndex, startIndex;
     private Map<String, Integer> nameMap;
 
 
     public NameSpace(String prefix) {
-        this.prefix = prefix;
-        this.curIndex = 1;
-        this.nameMap = CollectionUtils.newMap();
+        this(prefix, 1);
     }
 
     public NameSpace(String prefix, int startAt) {
-        this(prefix);
-
-        this.curIndex = startAt;
+        this.prefix = prefix;
+        this.curIndex = this.startIndex = startAt;
+        this.nameMap = CollectionUtils.newMap();
     }
 
 
@@ -46,6 +44,6 @@ public class NameSpace {
     }
 
     public String indexToName(Integer index) {
-        return prefix + index;
+        return prefix + Integer.toString(index + startIndex);
     }
 }
