@@ -50,7 +50,7 @@ public class PropositionalProblemGenerator implements Generator {
             generated.add(generateProblem());
         }
 
-        return new PropositionalProblemSet(generated, params, atomSpace);
+        return new PropositionalProblemSet(generated, new GeneratorParams(params), atomSpace);
     }
 
 
