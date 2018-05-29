@@ -2,31 +2,43 @@ package com.naveensundarg.shadow.prover.generators;
 
 public class PredicateGeneratorParams extends GeneratorParams {
 
-    // TODO: Make into a range
-    public int numConstants;
-    public int minArguments;
-    public int maxArguments;
-    // TODO: Make into a range
-    public int numPredicates;
-    // TODO: Make into a range
-    public int numEqualities;
+    /**
+     * Specifies the number of constants (0-arity functions) in the pool.
+     * <p>
+     * See GeneratorParams.atoms for a description of name pooling.
+     */
+    public Range constants;
+
+    /**
+     * Specifies the min & max arity for predicate.
+     */
+    public Range predicateArguments;
+
+    /**
+     * Specifies the number of predicates in the pool.
+     */
+    public Range predicates;
+
+    /**
+     * Equalities are inserted into generated clauses; this is used to specify
+     * limits to those insertions.
+     */
+    public Range equalities;
 
 
-    @Override
-    public GeneratorParams copy() {
-        PredicateGeneratorParams params = new PredicateGeneratorParams();
+    public PredicateGeneratorParams() {
+        super();
 
-        super.copyTo(params);
-        this.copyTo(params);
-
-        return params;
+        this.constants = this.predicateArguments = this.predicates =
+                this.equalities = new Range(0, 0);
     }
 
-    protected void copyTo(PredicateGeneratorParams other) {
-        other.numConstants = this.numConstants;
-        other.minArguments = this.minArguments;
-        other.maxArguments = this.maxArguments;
-        other.numPredicates = this.numPredicates;
-        other.numEqualities = this.numEqualities;
+    public PredicateGeneratorParams(PredicateGeneratorParams other) {
+        super(other);
+
+        this.constants = other.constants;
+        this.predicateArguments = other.predicateArguments;
+        this.predicates = other.predicates;
+        this.equalities = other.equalities;
     }
 }
