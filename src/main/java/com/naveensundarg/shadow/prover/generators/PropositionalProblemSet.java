@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class PropositionalProblemSet implements ProblemSet {
 
-    private static final long VERSION = 2;
+    private static final long VERSION = 2 + ProblemSet.GLOBAL_VERSION;
 
     private List<Pair<List<Formula>, Boolean>> pset;
     private GeneratorParams params;
