@@ -27,20 +27,22 @@ public class PredicateProblemGenerator implements Generator {
 
     public PredicateProblemGenerator(PredicateGeneratorParams generatorParams){
 
-        this.params = (PredicateGeneratorParams) generatorParams.copy();
+        this.params = new PredicateGeneratorParams(generatorParams);
         this.constantSpace = new NameSpace("c");
         this.predicateSpace = new NameSpace("P");
 
-        this.constantPool = new Constant[params.numConstants];
-        for(int i = 0; i < params.numConstants; i++) {
+        this.constantPool = new Constant[params.constants];
+        for(int i = 0; i < params.constants; i++) {
             this.constantPool[i] = new Constant(constantSpace.getNextName());
         }
 
-        this.predicatePool = new ImmutablePair[params.numPredicates];
-        for(int i = 0; i < params.numPredicates; i++) {
+        this.predicatePool = new ImmutablePair[params.predicates.max];
+        for(int i = 0; i < params.predicates.max; i++) {
             this.predicatePool[i] = ImmutablePair.from(
                     predicateSpace.getNextName(),
-                    ThreadLocalRandom.current().nextInt(params.minArguments, params.maxArguments +1));
+                    ThreadLocalRandom.current().nextInt(
+                            params.predicateArguments.min,
+                            params.predicateArguments.max +1));
         }
     }
 
@@ -52,7 +54,7 @@ public class PredicateProblemGenerator implements Generator {
 
 
     @Override
-    public List<Pair<List<Formula>, Boolean>> generate(int total) {
+    public ProblemSet generate(int total) {
 
         List<Pair<List<Formula>, Boolean>> generated = CollectionUtils.newEmptyList();
 
@@ -61,7 +63,7 @@ public class PredicateProblemGenerator implements Generator {
             generated.add(generateProblem());
         }
 
-        return generated;
+        return new PredicateProblemSet(generated, params, predicateSpace, constantSpace);
     }
 
 
@@ -69,7 +71,9 @@ public class PredicateProblemGenerator implements Generator {
 
         List<Formula> clauses = CollectionUtils.newEmptyList();
 
-        for(int i = 0; i< params.clauses; i++){
+        int totalClauses = ThreadLocalRandom.current().nextInt(params.clauses.min, params.clauses.max);
+
+        for(int i = 0; i < totalClauses; i++){
 
             clauses.add(generateRandomClause());
         }
@@ -86,14 +90,27 @@ public class PredicateProblemGenerator implements Generator {
         }
     }
 
+    private Formula generateRandomEquality() {
+        List<Value> constants = getRandomConstants(2);
+
+        return new Predicate("=", (Value[])constants.toArray());
+    }
+
     private Formula generateRandomClause(){
 
-        int totalLiteralsInClause = ThreadLocalRandom.current().nextInt(1, params.maxLiteralsInClause + 1 );
+        int totalLiteralsInClause = ThreadLocalRandom.current().nextInt(1, params.clauseWidth + 1 );
+        int equalities = ThreadLocalRandom.current().nextInt(Math.min(params.equalities.max,
+                totalLiteralsInClause) + 1);
+
         List<Formula> clauseLiterals = CollectionUtils.newEmptyList();
 
-        for(int i = 0; i< totalLiteralsInClause; i++){
+        for(int i = 0; i < totalLiteralsInClause - equalities; i++){
 
             clauseLiterals.add(generateRandomLiteral());
+        }
+
+        for(int i = 0; i < equalities; i++) {
+            clauseLiterals.add(generateRandomEquality());
         }
 
         return new Or(clauseLiterals);
@@ -114,7 +131,7 @@ public class PredicateProblemGenerator implements Generator {
     private Predicate generateRandomPredicate() {
         Pair<String, Integer> predicateInfo =
                 this.predicatePool[ThreadLocalRandom.current()
-                                  .nextInt(params.numPredicates)];
+                                  .nextInt(params.predicates.max)];
 
         List<Value> arguments = getRandomConstants(predicateInfo.second());
 
@@ -125,7 +142,7 @@ public class PredicateProblemGenerator implements Generator {
         List<Value> constants = CollectionUtils.newEmptyList();
 
         for(int i = 0; i < num_constants; i++) {
-            constants.add(this.constantPool[ThreadLocalRandom.current().nextInt(params.numConstants)]);
+            constants.add(this.constantPool[ThreadLocalRandom.current().nextInt(params.constants)]);
         }
 
         return constants;
