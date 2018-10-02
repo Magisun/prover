@@ -12,8 +12,7 @@ import com.naveensundarg.shadow.prover.utils.CollectionUtils;
 import com.naveensundarg.shadow.prover.utils.ImmutablePair;
 import com.naveensundarg.shadow.prover.utils.Pair;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PropositionalProblemGenerator implements Generator {
@@ -43,14 +42,27 @@ public class PropositionalProblemGenerator implements Generator {
     @Override
     public ProblemSet generate(int total) {
 
-        List<Pair<List<Formula>, Boolean>> generated = CollectionUtils.newEmptyList();
+        int positiveExamples = 0;
+        Set<Pair<List<Formula>, Boolean>> generated = new HashSet<>();
 
-        for (int i = 0; i < total; i++) {
+        while(generated.size() < total) {
+            Pair<List<Formula>, Boolean> problem = generateProblem();
 
-            generated.add(generateProblem());
+            if(generated.contains(problem)) {
+                continue;
+            }
+
+            if(problem.second() && positiveExamples < total/2) {
+                generated.add(problem);
+                positiveExamples++;
+            } else if(!problem.second() && (generated.size() - positiveExamples) < total/2) {
+                generated.add(problem);
+            }
         }
 
-        return new PropositionalProblemSet(generated, new GeneratorParams(params), atomSpace);
+        List<Pair<List<Formula>, Boolean>> gen_list = Arrays.asList(generated.toArray(new Pair[0]));
+
+        return new PropositionalProblemSet(gen_list, new GeneratorParams(params), atomSpace);
     }
 
 
