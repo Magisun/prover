@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class PropositionalProblemSet implements ProblemSet {
 
-    private static final long VERSION = 2 + ProblemSet.GLOBAL_VERSION;
+    private static final long VERSION = 3 + ProblemSet.GLOBAL_VERSION;
 
     private List<Pair<List<Formula>, Boolean>> pset;
     private GeneratorParams params;
@@ -74,14 +74,24 @@ public class PropositionalProblemSet implements ProblemSet {
                 JSONArray formulaRepresentation = new JSONArray();
 
                 Set<Formula> literals = Arrays.stream(((Or) formula).getArguments()).collect(Collectors.toSet());
+                // Add atoms
                 for(int i = 0; i < params.atoms; i++) {
                     Atom atom = new Atom(atomSpace.indexToName(i));
                     Not negatedAtom = new Not(atom);
 
+                    if(literals.contains(negatedAtom)) {
+                        formulaRepresentation.put(1);
+                    } else {
+                        formulaRepresentation.put(0);
+                    }
+                }
+
+                // Add their negations
+                for(int i = 0; i < params.atoms; i++) {
+                    Atom atom = new Atom(atomSpace.indexToName(i));
+
                     if(literals.contains(atom)) {
                         formulaRepresentation.put(1);
-                    } else if(literals.contains(negatedAtom)) {
-                        formulaRepresentation.put(-1);
                     } else {
                         formulaRepresentation.put(0);
                     }
